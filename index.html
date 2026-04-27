@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>AI Study Tool: Sorting Visualizer</title>
     <style>
-        .bar { width: 20px; background: blue; margin: 2px; display: inline-block; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #f4f7f6; }
+        #container { height: 150px; display: flex; align-items: flex-end; justify-content: center; margin: 20px; border-bottom: 2px solid #333; }
+        .bar { width: 30px; margin: 2px; transition: 0.2s all; border-radius: 4px 4px 0 0; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; background: #2ecc71; color: white; font-weight: bold; }
+        button:hover { background: #27ae60; }
+        .reset-btn { background: #e67e22; }
+        #status { font-weight: bold; color: #34495e; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h3>AI Foundation: Data Sorting Visualizer</h3>
+    <h3>📊 AI Foundation: Data Sorting Visualizer</h3>
+    <p>Watch how the algorithm organizes data steps-by-step.</p>
+    
     <div id="container"></div>
-    <button onclick="bubbleSort()">Start Sort</button>
+    <div id="status">Ready to Sort</div>
+    <br>
+    <button onclick="bubbleSort()">🚀 Start Sort</button>
+    <button class="reset-btn" onclick="resetData()">🎲 Randomize</button>
 
     <script>
         let data = [80, 30, 50, 20, 90, 10, 60];
         const cont = document.getElementById('container');
+        const statusText = document.getElementById('status');
 
-        function render() {
+        // Render bars with specific colors for visual feedback
+        function render(highlightIndices = [], sortedIndex = -1) {
             cont.innerHTML = '';
-            data.forEach(h => {
-                cont.innerHTML += `<div class="bar" style="height:${h}px"></div>`;
+            data.forEach((h, i) => {
+                let color = '#3498db'; // Default Blue
+                if (highlightIndices.includes(i)) color = '#e74c3c'; // Comparing (Red)
+                if (i >= data.length - sortedIndex && sortedIndex !== -1) color = '#2ecc71'; // Sorted (Green)
+                
+                cont.innerHTML += `<div class="bar" style="height:${h}px; background:${color}"></div>`;
             });
         }
 
         async function bubbleSort() {
+            statusText.innerText = "Algorithm Running...";
             for(let i=0; i<data.length; i++) {
                 for(let j=0; j<data.length-i-1; j++) {
+                    // Highlight the two bars being compared
+                    render([j, j+1], i);
+                    await new Promise(r => setTimeout(r, 200));
+
                     if(data[j] > data[j+1]) {
                         [data[j], data[j+1]] = [data[j+1], data[j]];
-                        render();
-                        await new Promise(r => setTimeout(r, 200));
+                        render([j, j+1], i);
                     }
                 }
             }
+            render([], data.length); // Final render to show all green
+            statusText.innerText = "✅ Sorting Complete!";
         }
+
+        function resetData() {
+            data = Array.from({length: 10}, () => Math.floor(Math.random() * 100) + 10);
+            statusText.innerText = "Data Randomized";
+            render();
+        }
+
         render();
     </script>
 </body>
