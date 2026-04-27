@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .bar { width: 20px; background: blue; margin: 2px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h3>AI Foundation: Data Sorting Visualizer</h3>
+    <div id="container"></div>
+    <button onclick="bubbleSort()">Start Sort</button>
+
+    <script>
+        let data = [80, 30, 50, 20, 90, 10, 60];
+        const cont = document.getElementById('container');
+
+        function render() {
+            cont.innerHTML = '';
+            data.forEach(h => {
+                cont.innerHTML += `<div class="bar" style="height:${h}px"></div>`;
+            });
+        }
+
+        async function bubbleSort() {
+            for(let i=0; i<data.length; i++) {
+                for(let j=0; j<data.length-i-1; j++) {
+                    if(data[j] > data[j+1]) {
+                        [data[j], data[j+1]] = [data[j+1], data[j]];
+                        render();
+                        await new Promise(r => setTimeout(r, 200));
+                    }
+                }
+            }
+        }
+        render();
+    </script>
+</body>
+</html>
